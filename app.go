@@ -14,7 +14,6 @@ import (
 
 var config = Config{}
 var dao = MoviesDAO{}
-var test = "liyumeng"
 
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
 	movies, err := dao.FindAll()
