@@ -15,15 +15,17 @@ import (
 var config = Config{}
 var dao = MoviesDAO{}
 
+// AllMoviesEndPoint fetches all movies
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
 	movies, err := dao.FindAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, movies)
+	respondWithJSON(w, http.StatusOK, movies)
 }
 
+//FindMovieEndPoint finds a movie by id
 func FindMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	movie, err := dao.FindById(params["id"])
@@ -31,9 +33,10 @@ func FindMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, movie)
+	respondWithJSON(w, http.StatusOK, movie)
 }
 
+//CreateMovieEndPoint creates a movied record accordingly
 func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var movie Movie
@@ -46,9 +49,10 @@ func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusCreated, movie)
+	respondWithJSON(w, http.StatusCreated, movie)
 }
 
+//UpdateMovieEndPoint updates a movie record as requested
 func UpdateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var movie Movie
@@ -60,10 +64,11 @@ func UpdateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 
 }
 
+//DeleteMovieEndPoint deletes a movie record per requested
 func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var movie Movie
@@ -75,10 +80,10 @@ func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
-func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
@@ -86,7 +91,7 @@ func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondWithJson(w, code, map[string]string{"error": msg})
+	respondWithJSON(w, code, map[string]string{"error": msg})
 }
 
 func init() {
