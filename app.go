@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	. "restapi-movies/config"
@@ -92,6 +93,10 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
 	respondWithJSON(w, code, map[string]string{"error": msg})
+}
+
+func test(w http.ResponseWriter, code int, msg string) {
+	fmt.Println("what the hell!")
 }
 
 func init() {
