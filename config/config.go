@@ -1,10 +1,12 @@
 package config
 
 import (
-	"github.com/BurntSushi/toml"
 	"log"
+
+	"github.com/BurntSushi/toml"
 )
 
+//Config project configure structure
 type Config struct {
 	Server   string
 	Database string
