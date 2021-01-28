@@ -3,11 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	. "restapi-movies/config"
 	. "restapi-movies/dao"
 	. "restapi-movies/models"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
@@ -15,6 +18,11 @@ import (
 
 var config = Config{}
 var dao = MoviesDAO{}
+
+// GetSamplePNG returns the example png
+func GetSamplePNG(w http.ResponseWriter, r *http.Request) {
+	respondWithPNG(w, http.StatusOK, nil)
+}
 
 // AllMoviesEndPoint fetches all movies
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
@@ -84,6 +92,25 @@ func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
+func respondWithPNG(w http.ResponseWriter, code int, payload interface{}) {
+	file, err := os.OpenFile("/Users/bruce/Downloads/coffee.png", os.O_RDONLY, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	var b []byte
+	if b, err = ioutil.ReadAll(file); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("The length of image %d", len(b))
+	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Content-Lenght", strconv.Itoa(len(b)))
+	w.WriteHeader(code)
+	w.Write(b)
+}
+
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 	w.Header().Set("Content-Type", "application/json")
@@ -99,6 +126,7 @@ func test(w http.ResponseWriter, code int, msg string) {
 	fmt.Println("what the hell!")
 }
 
+/*
 func init() {
 	config.Read()
 
@@ -106,6 +134,7 @@ func init() {
 	dao.Database = config.Database
 	dao.Connect()
 }
+*/
 
 func main() {
 	r := mux.NewRouter()
@@ -114,6 +143,7 @@ func main() {
 	r.HandleFunc("/movies", UpdateMovieEndPoint).Methods("PUT")
 	r.HandleFunc("/movies", DeleteMovieEndPoint).Methods("DELETE")
 	r.HandleFunc("/movies/{id}", FindMovieEndPoint).Methods("GET")
+	r.HandleFunc("/png", GetSamplePNG).Methods("GET")
 	if err := http.ListenAndServe(":3000", r); err != nil {
 		log.Fatal(err)
 	}
