@@ -19,7 +19,7 @@ import (
 var config = Config{}
 var dao = MoviesDAO{}
 
-// GetSamplePNG returns the example png
+//  GetSamplePNG returns the example png
 func GetSamplePNG(w http.ResponseWriter, r *http.Request) {
 	respondWithPNG(w, http.StatusOK, nil)
 }
